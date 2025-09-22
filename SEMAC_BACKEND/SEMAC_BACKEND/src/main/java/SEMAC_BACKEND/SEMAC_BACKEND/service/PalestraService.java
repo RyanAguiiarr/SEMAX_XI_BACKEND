@@ -30,7 +30,7 @@ public class PalestraService {
 
             return nova_palestra;
         }catch (Exception e){
-            throw new Exception("falha no cadastro da palestra");
+            throw new Exception("falha no cadastro da palestra" + e);
 
         }
     }

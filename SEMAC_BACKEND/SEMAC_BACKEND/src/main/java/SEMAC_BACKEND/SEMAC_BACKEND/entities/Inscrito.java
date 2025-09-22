@@ -3,12 +3,19 @@ package SEMAC_BACKEND.SEMAC_BACKEND.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import org.antlr.v4.runtime.misc.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Inscrito {
 
     @Id
@@ -19,7 +26,8 @@ public class Inscrito {
     private String nome_completo;
 
     @NotBlank(message = "campo email não pode estar vazio")
-    @Email
+    @Email(message = "email inválido")
+    @Column(unique = true)
     private String email;
 
     @ManyToMany
@@ -29,8 +37,4 @@ public class Inscrito {
             inverseJoinColumns = @JoinColumn(name = "palestra_id")
     )
     private Set<Palestra> palestras = new HashSet<>();
-
-
-
-
 }
