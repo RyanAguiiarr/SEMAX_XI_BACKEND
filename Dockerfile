@@ -5,7 +5,6 @@ FROM eclipse-temurin:21-jdk-jammy AS builder
 # Define o diretório de trabalho dentro do contêiner.
 WORKDIR /app
 
-# --- CORREÇÃO APLICADA AQUI ---
 # Copia o conteúdo da pasta aninhada correta para o diretório de trabalho.
 # O caminho correto no repositório é SEMAC_BACKEND/SEMAC_BACKEND/
 COPY SEMAC_BACKEND/SEMAC_BACKEND/ .
@@ -36,6 +35,9 @@ COPY --from=builder /app/target/SEMAC_BACKEND-0.0.1-SNAPSHOT.jar app.jar
 # Expõe a porta 8080 para que a aplicação possa receber tráfego.
 EXPOSE 8080
 
+# --- CORREÇÃO APLICADA AQUI ---
 # Comando para iniciar a aplicação quando o contêiner for executado.
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Usamos "sh -c" para poder adicionar o prefixo "jdbc:" à URL do banco de dados
+# fornecida pela variável de ambiente do Render ($SPRING_DATASOURCE_URL).
+ENTRYPOINT ["sh", "-c", "java -jar -Dspring.datasource.url=jdbc:${SPRING_DATASOURCE_URL} app.jar"]
 
