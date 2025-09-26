@@ -7,13 +7,13 @@ WORKDIR /app
 
 # Copia o arquivo pom.xml primeiro para aproveitar o cache de camadas do Docker.
 # As dependências só serão baixadas novamente se o pom.xml mudar.
-COPY pom.xml .
+COPY SEMAC_BACKEND/SEMAC_BACKEND/pom.xml .
 
 # Baixa todas as dependências do projeto.
 RUN mvn dependency:go-offline
 
 # Copia todo o código-fonte do projeto para o diretório de trabalho.
-COPY src ./src
+COPY SEMAC_BACKEND/SEMAC_BACKEND/src ./src
 
 # Compila a aplicação e gera o arquivo .jar, pulando os testes.
 RUN mvn package -DskipTests

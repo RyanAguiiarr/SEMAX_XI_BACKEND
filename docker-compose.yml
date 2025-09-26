@@ -19,7 +19,7 @@ services:
 
   # Serviço da sua aplicação Spring Boot.
   app:
-    build: . # Constrói a imagem a partir do Dockerfile no diretório atual.
+    build: SEMAC_BACKEND/SEMAC_BACKEND # Constrói a imagem a partir do Dockerfile no diretório atual.
     container_name: semac_backend_app
     ports:
       # Mapeia a porta 8080 do contêiner para a porta 8080 da sua máquina.
