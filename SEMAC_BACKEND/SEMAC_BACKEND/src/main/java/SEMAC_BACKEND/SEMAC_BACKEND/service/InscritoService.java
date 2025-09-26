@@ -32,7 +32,7 @@ public class InscritoService {
                     throw new Exception("O aluno já está inscrito na palestra: " + palestra.getTema());
                 }
             }
-            emailService.sendEmail(inscrito.getEmail(), "INSCRIÇÃO SEMAC", "Voçê realizou sua inscrição com sucesso na SEMAC XI, te aguardamos em nosso evento !");
+            //emailService.sendEmail(inscrito.getEmail(), "INSCRIÇÃO SEMAC", "Voçê realizou sua inscrição com sucesso na SEMAC XI, te aguardamos em nosso evento !");
 
             return inscritoRepository.save(inscrito);
         }catch (Exception e){
