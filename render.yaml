@@ -1,11 +1,11 @@
 # Versão corrigida do arquivo de configuração para o Render.
-services:
-  # 1. Define o serviço para o banco de dados PostgreSQL.
-  # CORREÇÃO: Usamos 'type: postgres', que é o tipo específico para bancos de dados PostgreSQL.
-  - type: postgres
-    name: semac-postgres-db
+# CORREÇÃO FINAL: Bancos de dados e serviços são definidos em seções separadas.
+databases:
+  # 1. Define o banco de dados PostgreSQL.
+  - name: semac-postgres-db
     plan: free # O plano gratuito é ótimo para começar.
 
+services:
   # 2. Define o serviço para a sua aplicação backend Spring Boot.
   - type: web
     name: semac-backend-app
@@ -14,20 +14,17 @@ services:
     plan: free
     envVars:
       # Configurações do Banco de Dados.
-      # CORREÇÃO: Atualizamos o 'type' em fromService para 'postgres' para corresponder ao serviço acima.
+      # CORREÇÃO: Usamos 'fromDatabase' para referenciar o banco de dados.
       - key: SPRING_DATASOURCE_URL
-        fromService:
-          type: postgres # Alterado de pserv para postgres
+        fromDatabase:
           name: semac-postgres-db
           property: connectionString
       - key: SPRING_DATASOURCE_USERNAME
-        fromService:
-          type: postgres # Alterado de pserv para postgres
+        fromDatabase:
           name: semac-postgres-db
           property: user
       - key: SPRING_DATASOURCE_PASSWORD
-        fromService:
-          type: postgres # Alterado de pserv para postgres
+        fromDatabase:
           name: semac-postgres-db
           property: password
 
