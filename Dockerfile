@@ -37,7 +37,7 @@ EXPOSE 8080
 
 # --- CORREÇÃO APLICADA AQUI ---
 # Comando para iniciar a aplicação quando o contêiner for executado.
-# Usamos "sh -c" para poder adicionar o prefixo "jdbc:" à URL do banco de dados
-# fornecida pela variável de ambiente do Render ($SPRING_DATASOURCE_URL).
-ENTRYPOINT ["sh", "-c", "java -jar -Dspring.datasource.url=jdbc:${SPRING_DATASOURCE_URL} app.jar"]
+# Adicionamos aspas (\") ao redor do valor da URL para garantir que caracteres
+# especiais na senha não quebrem o comando.
+ENTRYPOINT ["sh", "-c", "java -jar -Dspring.datasource.url=\"jdbc:${SPRING_DATASOURCE_URL}\" app.jar"]
 
