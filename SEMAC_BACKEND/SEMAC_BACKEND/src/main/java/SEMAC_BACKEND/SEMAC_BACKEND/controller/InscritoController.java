@@ -5,10 +5,7 @@ import SEMAC_BACKEND.SEMAC_BACKEND.service.InscritoService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/inscrito")
 @RestController
@@ -17,6 +14,7 @@ public class InscritoController {
 
     private InscritoService inscritoService;
 
+    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping
     public ResponseEntity cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito) throws Exception{
         try{
