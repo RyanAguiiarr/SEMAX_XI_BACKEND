@@ -6,9 +6,9 @@ FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
 
 # --- CORREÇÃO APLICADA AQUI ---
-# Copia todo o conteúdo da subpasta do projeto para o diretório de trabalho.
-# Isso resolve o erro "file not found", pois o projeto não está na raiz do repositório.
-COPY SEMAC_BACKEND/ .
+# Copia o conteúdo da pasta aninhada correta para o diretório de trabalho.
+# O caminho correto no repositório é SEMAC_BACKEND/SEMAC_BACKEND/
+COPY SEMAC_BACKEND/SEMAC_BACKEND/ .
 
 # Damos permissão de execução para o script do Maven Wrapper.
 RUN chmod +x ./mvnw
