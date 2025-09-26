@@ -5,21 +5,17 @@ FROM eclipse-temurin:21-jdk-jammy AS builder
 # Define o diretório de trabalho dentro do contêiner.
 WORKDIR /app
 
-# Copia os arquivos essenciais do Maven para o contêiner.
-# O wrapper (mvnw) é a forma recomendada de executar o Maven.
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-
 # --- CORREÇÃO APLICADA AQUI ---
+# Copia todo o conteúdo da subpasta do projeto para o diretório de trabalho.
+# Isso resolve o erro "file not found", pois o projeto não está na raiz do repositório.
+COPY SEMAC_BACKEND/ .
+
 # Damos permissão de execução para o script do Maven Wrapper.
 RUN chmod +x ./mvnw
 
 # Baixa todas as dependências do projeto.
 # Usamos ./mvnw em vez de mvn.
 RUN ./mvnw dependency:go-offline
-
-# Copia todo o código-fonte do projeto para o diretório de trabalho.
-COPY src ./src
 
 # Compila a aplicação e gera o arquivo .jar, pulando os testes.
 # Usamos ./mvnw em vez de mvn.
