@@ -1,0 +1,54 @@
+# Define os serviços que serão criados no Render a partir deste blueprint.
+services:
+  # 1. Define o serviço para o banco de dados PostgreSQL.
+  - type: pserv # 'pserv' é o tipo para "Private Service", ideal para bancos de dados.
+    name: semac-postgres-db # Nome do serviço do banco de dados.
+    runtime: postgres # Especifica que o runtime é PostgreSQL.
+    # A versão do PostgreSQL. É bom manter alinhado com o que você usou no desenvolvimento.
+    postgres:
+      version: 16
+    # O Render gerencia os discos para persistência de dados automaticamente.
+    # O plano gratuito ("free") é uma boa opção para começar.
+    plan: free
+
+  # 2. Define o serviço para a sua aplicação backend Spring Boot.
+  - type: web # 'web' é o tipo para serviços que recebem tráfego HTTP.
+    name: semac-backend-app # Nome da sua aplicação.
+    runtime: docker # Indica ao Render para usar o Dockerfile do seu repositório.
+    # O Render irá construir a imagem a partir do Dockerfile na raiz do seu projeto.
+    dockerfilePath: ./Dockerfile
+    plan: free # Define o plano de serviço (o plano gratuito é ótimo para iniciar).
+    # Variáveis de ambiente necessárias para a sua aplicação rodar.
+    envVars:
+      # Configurações do Banco de Dados.
+      # O Render injeta os valores do banco de dados criado acima.
+      - key: SPRING_DATASOURCE_URL
+        fromService:
+          type: pserv
+          name: semac-postgres-db
+          property: connectionString # Pega a URL de conexão interna do serviço de banco de dados.
+      - key: SPRING_DATASOURCE_USERNAME
+        fromService:
+          type: pserv
+          name: semac-postgres-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromService:
+          type: pserv
+          name: semac-postgres-db
+          property: password
+
+      # Configuração do Hibernate. Para produção, 'validate' é mais seguro que 'update'.
+      # 'update' pode ser usado no início, mas tenha cuidado.
+      - key: SPRING_JPA_HIBERNATE_DDL_AUTO
+        value: update
+
+      # Configurações de E-mail (essas são sensíveis, considere usar "secrets" do Render no futuro).
+      - key: SPRING_MAIL_HOST
+        value: smtp.gmail.com
+      - key: SPRING_MAIL_PORT
+        value: 587
+      - key: SPRING_MAIL_USERNAME
+        value: ryan.c.aguiiarr@gmail.com
+      - key: SPRING_MAIL_PASSWORD
+        value: ciisuociovnxeoet
