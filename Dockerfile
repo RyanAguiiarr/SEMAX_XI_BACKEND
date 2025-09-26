@@ -1,43 +1,31 @@
 # ESTÁGIO 1: Build da Aplicação com Maven
-# Usamos uma imagem com o JDK completo para compilar o código.
 FROM eclipse-temurin:21-jdk-jammy AS builder
 
-# Define o diretório de trabalho dentro do contêiner.
 WORKDIR /app
 
-# Copia o conteúdo da pasta aninhada correta para o diretório de trabalho.
-# O caminho correto no repositório é SEMAC_BACKEND/SEMAC_BACKEND/
+# Copia o conteúdo da pasta aninhada correta para o diretório de trabalho
 COPY SEMAC_BACKEND/SEMAC_BACKEND/ .
 
-# Damos permissão de execução para o script do Maven Wrapper.
+# Dá permissão de execução para o script do Maven Wrapper
 RUN chmod +x ./mvnw
 
-# Baixa todas as dependências do projeto.
-# Usamos ./mvnw em vez de mvn.
+# Baixa todas as dependências do projeto
 RUN ./mvnw dependency:go-offline
 
-# Compila a aplicação e gera o arquivo .jar, pulando os testes.
-# Usamos ./mvnw em vez de mvn.
+# Compila a aplicação e gera o arquivo .jar, pulando os testes
 RUN ./mvnw package -DskipTests
 
-
 # ESTÁGIO 2: Imagem Final de Execução
-# Usamos uma imagem JRE, que é menor e mais segura, apenas para rodar a aplicação.
 FROM eclipse-temurin:21-jre-jammy
 
-# Define o diretório de trabalho.
 WORKDIR /app
 
-# Copia o arquivo .jar gerado no estágio de build para a imagem final.
-# O nome do JAR deve corresponder ao <artifactId> e <version> do seu pom.xml.
+# Copia o arquivo .jar gerado no estágio de build para a imagem final
 COPY --from=builder /app/target/SEMAC_BACKEND-0.0.1-SNAPSHOT.jar app.jar
 
-# Expõe a porta 8080 para que a aplicação possa receber tráfego.
-EXPOSE 8080
+# Expõe a porta que o Render irá usar (geralmente definida pela variável PORT)
+EXPOSE $PORT
 
-# --- CORREÇÃO APLICADA AQUI ---
-# Comando para iniciar a aplicação quando o contêiner for executado.
-# Adicionamos aspas (\") ao redor do valor da URL para garantir que caracteres
-# especiais na senha não quebrem o comando.
-ENTRYPOINT ["sh", "-c", "java -jar -Dspring.datasource.url=\"jdbc:${SPRING_DATASOURCE_URL}\" app.jar"]
-
+# Comando para iniciar a aplicação
+# Remove a configuração manual da datasource URL - deixe o Spring usar as variáveis de ambiente
+ENTRYPOINT ["java", "-jar", "app.jar"]
