@@ -14,7 +14,6 @@ public class InscritoController {
 
     private InscritoService inscritoService;
 
-    @CrossOrigin(origins = "http://localhost:5173")
     @PostMapping
     public ResponseEntity cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito) throws Exception{
         try{
