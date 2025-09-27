@@ -1,8 +1,10 @@
 package SEMAC_BACKEND.SEMAC_BACKEND.service;
 
 import SEMAC_BACKEND.SEMAC_BACKEND.entities.Inscrito;
+import SEMAC_BACKEND.SEMAC_BACKEND.exceptions.ExceptionGlobal;
 import SEMAC_BACKEND.SEMAC_BACKEND.repositories.InscritoRepository;
 import lombok.AllArgsConstructor;
+import org.aspectj.bridge.IMessage;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,29 +17,26 @@ public class InscritoService {
     private EmailService emailService;
 
 
-    public Inscrito cadastro_inscrito(Inscrito inscrito) throws Exception{
+    public Inscrito cadastro_inscrito(Inscrito inscrito) { // Não precisa mais de "throws Exception"
 
-        try{
-            for(var palestra : inscrito.getPalestras()){
+        for (var palestra : inscrito.getPalestras()) {
 
-                List numero_lotacao = inscritoRepository.findByPalestrasId(palestra.getId());
-
-                if(numero_lotacao.size() >= 120){
-                    throw new Exception("palestra atingiu lotação maxima");
-                }
-
-
-                var jaInscrito = inscritoRepository.findByEmailAndPalestra(inscrito.getEmail(), palestra.getId());
-                if (jaInscrito.isPresent()) {
-                    throw new Exception("O aluno já está inscrito na palestra: " + palestra.getTema());
-                }
+            List<?> numero_lotacao = inscritoRepository.findByPalestrasId(palestra.getId());
+            if (numero_lotacao.size() >= 120) {
+                // Lança a exceção específica
+                throw new ExceptionGlobal.PalestraLotadaException("A palestra '" + palestra.getTema() + "' atingiu a lotação máxima.");
             }
-            //emailService.sendEmail(inscrito.getEmail(), "INSCRIÇÃO SEMAC", "Voçê realizou sua inscrição com sucesso na SEMAC XI, te aguardamos em nosso evento !");
 
-            return inscritoRepository.save(inscrito);
-        }catch (Exception e){
-            throw new Exception("erro ao cadastrar inscrito" + e);
+            var jaInscrito = inscritoRepository.findByEmailAndPalestra(inscrito.getEmail(), palestra.getId());
+            if (jaInscrito.isPresent()) {
+                // Lança a outra exceção específica
+                throw new ExceptionGlobal.AlunoJaInscritoException("O aluno já está inscrito na palestra: " + palestra.getTema());
+            }
         }
+
+        // Se tudo deu certo, salva no final
+        // emailService.sendEmail(...)
+        return inscritoRepository.save(inscrito);
     }
 
 
