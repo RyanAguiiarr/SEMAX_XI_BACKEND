@@ -28,10 +28,9 @@ public class InscritoService {
         // 🔹 Verifica lotação
         Long inscritos = inscricaoRepository.countByPalestraId(palestra_id);
 
-        if(inscritoRepository.findByEmail(inscrito.getEmail()).isEmpty()){
-            //realizar inscrição de aluno
-            inscritoRepository.save(inscrito);
-        }
+        Inscrito inscritoSalvo = inscritoRepository.findByEmail(inscrito.getEmail())
+                .orElseGet(() -> inscritoRepository.save(inscrito));
+
         Optional<Palestra> palestraOpt = palestraRepository.findById(palestra_id.toString());
 
         Palestra palestra = palestraOpt.orElseThrow(() ->
@@ -46,7 +45,7 @@ public class InscritoService {
         }
 
         // 🔹 Verifica se já está inscrito
-        var jaInscrito = inscricaoRepository.findByInscritoIdAndPalestraId(inscrito.getId(), palestra_id);
+        var jaInscrito = inscricaoRepository.findByInscritoIdAndPalestraId(inscritoSalvo.getId(), palestra_id);
         if (jaInscrito.isPresent()) {
             throw new ExceptionGlobal.AlunoJaInscritoException(
                     "O aluno já está inscrito na palestra: " + palestra.getTema()
@@ -55,7 +54,7 @@ public class InscritoService {
 
         // 🔹 Cria inscrição
         Inscricao novaInscricao = new Inscricao();
-        novaInscricao.setInscrito(inscrito);
+        novaInscricao.setInscrito(inscritoSalvo);
         novaInscricao.setPalestra(palestra);
         novaInscricao.setDataInscricao(LocalDateTime.now());
 
