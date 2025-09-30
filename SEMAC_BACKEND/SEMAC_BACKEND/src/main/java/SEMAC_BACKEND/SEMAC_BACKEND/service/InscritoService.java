@@ -22,11 +22,16 @@ public class InscritoService {
 
     private final InscricaoRepository inscricaoRepository;
     private final PalestraRepository palestraRepository;
+    private final InscritoRepository inscritoRepository;
 
     public Inscricao cadastrarInscricao(Inscrito inscrito, Integer palestra_id) {
         // 🔹 Verifica lotação
         Long inscritos = inscricaoRepository.countByPalestraId(palestra_id);
 
+        if(inscritoRepository.findByEmail(inscrito.getEmail()).isEmpty()){
+            //realizar inscrição de aluno
+            inscritoRepository.save(inscrito);
+        }
         Optional<Palestra> palestraOpt = palestraRepository.findById(palestra_id.toString());
 
         Palestra palestra = palestraOpt.orElseThrow(() ->

@@ -10,4 +10,6 @@ import java.util.Optional;
 
 public interface InscritoRepository extends JpaRepository<Inscrito, String> {
 
+    Optional<Inscrito> findByEmail(String email);
+
 }
