@@ -30,7 +30,8 @@ public class Palestra {
 
     private String horario_palestra;
 
-    @ManyToMany(mappedBy = "palestras")
-    private Set<Inscrito> inscritos = new HashSet<>();
+    // 🔹 Se quiser acessar inscrições a partir da palestra
+    @OneToMany(mappedBy = "palestra", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inscricao> inscricoes = new HashSet<>();
 
 }

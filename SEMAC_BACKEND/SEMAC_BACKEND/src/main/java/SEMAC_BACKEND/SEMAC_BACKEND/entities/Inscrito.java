@@ -30,11 +30,8 @@ public class Inscrito {
     @Column(unique = true)
     private String email;
 
-    @ManyToMany
-    @JoinTable(
-            name = "inscrito_palestra",
-            joinColumns = @JoinColumn(name = "inscrito_id"),
-            inverseJoinColumns = @JoinColumn(name = "palestra_id")
-    )
-    private Set<Palestra> palestras = new HashSet<>();
+    // 🔹 Se quiser acessar inscrições a partir do inscrito
+    @OneToMany(mappedBy = "inscrito", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Inscricao> inscricoes = new HashSet<>();
+
 }

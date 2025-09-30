@@ -9,11 +9,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InscritoRepository extends JpaRepository<Inscrito, String> {
-    Optional<Inscrito> findByemail(String email);
 
-    @Query("SELECT i FROM Inscrito i JOIN i.palestras p WHERE p.id = :palestraId")
-    List<Inscrito> findByPalestrasId(Integer palestraId);
-
-    @Query("SELECT i FROM Inscrito i JOIN i.palestras p WHERE i.email = :email AND p.id = :palestraId")
-    Optional<Inscrito> findByEmailAndPalestra(String email, Integer palestraId);
 }

@@ -7,5 +7,7 @@ import java.util.Optional;
 
 public interface PalestraRepository extends JpaRepository<Palestra, String> {
     boolean existsByTema(String tema);
+
+
     ;
 }

@@ -14,4 +14,12 @@ public class ExceptionGlobal {
             super(message);
         }
     }
+
+    public static class PalestraNaoEncontradaException extends RuntimeException {
+        public PalestraNaoEncontradaException(String message) {
+            super(message);
+        }
+    }
+
+
 }

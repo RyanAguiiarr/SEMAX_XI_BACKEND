@@ -1,7 +1,9 @@
 package SEMAC_BACKEND.SEMAC_BACKEND.controller;
 
+import SEMAC_BACKEND.SEMAC_BACKEND.entities.Inscricao;
 import SEMAC_BACKEND.SEMAC_BACKEND.entities.Inscrito;
 // Certifique-se de importar suas exceções se elas estiverem em arquivos separados
+import SEMAC_BACKEND.SEMAC_BACKEND.entities.Palestra;
 import SEMAC_BACKEND.SEMAC_BACKEND.exceptions.ExceptionGlobal.AlunoJaInscritoException;
 import SEMAC_BACKEND.SEMAC_BACKEND.exceptions.ExceptionGlobal.PalestraLotadaException;
 import SEMAC_BACKEND.SEMAC_BACKEND.service.InscritoService;
@@ -11,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequestMapping("/inscrito")
+@RequestMapping("/inscricao")
 @RestController
 @AllArgsConstructor
 public class InscritoController {
@@ -20,13 +22,13 @@ public class InscritoController {
 
     @PostMapping
     // O método não precisa de "throws Exception" e não tem try-catch
-    public ResponseEntity<Inscrito> cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito) {
+    public ResponseEntity<Inscricao> cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito, Integer palestra_id) {
 
         // Apenas chame o serviço. Deixe as exceções acontecerem.
-        Inscrito novoInscrito = inscritoService.cadastro_inscrito(inscrito);
+        Inscricao novaInscricao = inscritoService.cadastrarInscricao(inscrito, palestra_id);
 
         // Se passar daqui, deu tudo certo.
-        return ResponseEntity.status(HttpStatus.CREATED).body(novoInscrito);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novaInscricao);
     }
 
     // O @ExceptionHandler vai funcionar como o "catch" para o erro de aluno já inscrito

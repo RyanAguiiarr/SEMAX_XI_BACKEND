@@ -1,47 +1,60 @@
 package SEMAC_BACKEND.SEMAC_BACKEND.service;
 
+import SEMAC_BACKEND.SEMAC_BACKEND.entities.Inscricao;
 import SEMAC_BACKEND.SEMAC_BACKEND.entities.Inscrito;
+import SEMAC_BACKEND.SEMAC_BACKEND.entities.Palestra;
 import SEMAC_BACKEND.SEMAC_BACKEND.exceptions.ExceptionGlobal;
+import SEMAC_BACKEND.SEMAC_BACKEND.repositories.InscricaoRepository;
 import SEMAC_BACKEND.SEMAC_BACKEND.repositories.InscritoRepository;
+import SEMAC_BACKEND.SEMAC_BACKEND.repositories.PalestraRepository;
 import lombok.AllArgsConstructor;
 import org.aspectj.bridge.IMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
 public class InscritoService {
 
-    private InscritoRepository inscritoRepository;
-    private EmailService emailService;
+    private final InscricaoRepository inscricaoRepository;
+    private final PalestraRepository palestraRepository;
 
+    public Inscricao cadastrarInscricao(Inscrito inscrito, Integer palestra_id) {
+        // 🔹 Verifica lotação
+        Long inscritos = inscricaoRepository.countByPalestraId(palestra_id);
 
-    public Inscrito cadastro_inscrito(Inscrito inscrito) {
+        Optional<Palestra> palestraOpt = palestraRepository.findById(palestra_id.toString());
 
-        for (var palestra : inscrito.getPalestras()) {
-
-            // Verifica lotação
-            List<Inscrito> inscritosNaPalestra = inscritoRepository.findByPalestrasId(palestra.getId());
-            if (inscritosNaPalestra.size() >= 120) {
-                throw new ExceptionGlobal.PalestraLotadaException(
-                        "A palestra '" + palestra.getTema() + "' atingiu a lotação máxima."
-                );
-            }
-
-            // Verifica se já está inscrito
-            var jaInscrito = inscritoRepository.findByEmailAndPalestra(inscrito.getEmail(), palestra.getId());
-            if (jaInscrito.isPresent()) {
-                throw new ExceptionGlobal.AlunoJaInscritoException(
-                        "O aluno já está inscrito na palestra: " + palestra.getTema()
-                );
-            }
+        Palestra palestra = palestraOpt.orElseThrow(() ->
+                new ExceptionGlobal.PalestraNaoEncontradaException(
+                        "Palestra com ID " + palestra_id + " não encontrada"
+                )
+        );
+        if (inscritos >= 120) {
+            throw new ExceptionGlobal.PalestraLotadaException(
+                    "A palestra '" + palestra.getTema() + "' atingiu a lotação máxima."
+            );
         }
 
-        return inscritoRepository.save(inscrito);
+        // 🔹 Verifica se já está inscrito
+        var jaInscrito = inscricaoRepository.findByInscritoIdAndPalestraId(inscrito.getId(), palestra_id);
+        if (jaInscrito.isPresent()) {
+            throw new ExceptionGlobal.AlunoJaInscritoException(
+                    "O aluno já está inscrito na palestra: " + palestra.getTema()
+            );
+        }
+
+        // 🔹 Cria inscrição
+        Inscricao novaInscricao = new Inscricao();
+        novaInscricao.setInscrito(inscrito);
+        novaInscricao.setPalestra(palestra);
+        novaInscricao.setDataInscricao(LocalDateTime.now());
+
+        return inscricaoRepository.save(novaInscricao);
     }
-
-
 
 }
