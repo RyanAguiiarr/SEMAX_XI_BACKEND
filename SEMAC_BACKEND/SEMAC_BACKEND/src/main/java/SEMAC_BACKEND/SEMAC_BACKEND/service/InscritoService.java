@@ -23,6 +23,7 @@ public class InscritoService {
     private final InscricaoRepository inscricaoRepository;
     private final PalestraRepository palestraRepository;
     private final InscritoRepository inscritoRepository;
+    private final EmailService emailService;
 
     public Inscricao cadastrarInscricao(Inscrito inscrito, Integer palestra_id) {
         // 🔹 Verifica lotação
@@ -38,7 +39,7 @@ public class InscritoService {
                         "Palestra com ID " + palestra_id + " não encontrada"
                 )
         );
-        if (inscritos >= 120) {
+        if (inscritos >= 100) {
             throw new ExceptionGlobal.PalestraLotadaException(
                     "A palestra '" + palestra.getTema() + "' atingiu a lotação máxima."
             );
@@ -57,6 +58,8 @@ public class InscritoService {
         novaInscricao.setInscrito(inscritoSalvo);
         novaInscricao.setPalestra(palestra);
         novaInscricao.setDataInscricao(LocalDateTime.now());
+
+        emailService.sendEmail(inscritoSalvo.getEmail(), "INSCRIÇÃO SEMAC XI 2025", "Sua inscrição foi realizada com sucesso na SEMAC XI 2025 , te aguardamos no dia do evento !");
 
         return inscricaoRepository.save(novaInscricao);
     }
