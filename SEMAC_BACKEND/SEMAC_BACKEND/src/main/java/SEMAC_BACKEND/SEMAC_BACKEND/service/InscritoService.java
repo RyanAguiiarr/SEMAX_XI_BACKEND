@@ -12,6 +12,7 @@ import org.aspectj.bridge.IMessage;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,7 @@ public class InscritoService {
     private final InscritoRepository inscritoRepository;
     private final EmailService emailService;
 
-    public Inscricao cadastrarInscricao(Inscrito inscrito, Integer palestra_id) {
+    public Inscricao cadastrarInscricao(Inscrito inscrito, Integer palestra_id)  throws IOException {
         // 🔹 Verifica lotação
         Long inscritos = inscricaoRepository.countByPalestraId(palestra_id);
 
@@ -59,7 +60,7 @@ public class InscritoService {
         novaInscricao.setPalestra(palestra);
         novaInscricao.setDataInscricao(LocalDateTime.now());
 
-        emailService.sendEmail(inscritoSalvo.getEmail(), "INSCRIÇÃO SEMAC XI 2025", "Sua inscrição foi realizada com sucesso na SEMAC XI 2025 , te aguardamos no dia do evento !");
+        emailService.sendEmail(inscritoSalvo.getEmail(), "INSCRIÇÃO SEMACXI 2025", "Sua inscrição foi realizada com Sucesso na SEMAC XI 2025 , te aguardamos no evento !");
 
         return inscricaoRepository.save(novaInscricao);
     }

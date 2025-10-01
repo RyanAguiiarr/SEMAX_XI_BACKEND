@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RequestMapping("/inscricao")
 @RestController
 @AllArgsConstructor
@@ -22,7 +24,7 @@ public class InscritoController {
 
     @PostMapping
     // O método não precisa de "throws Exception" e não tem try-catch
-    public ResponseEntity<Inscricao> cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito, @RequestParam Integer palestra_id) {
+    public ResponseEntity<Inscricao> cadastro_Inscrito(@Valid @RequestBody Inscrito inscrito, @RequestParam Integer palestra_id) throws IOException {
 
         // Apenas chame o serviço. Deixe as exceções acontecerem.
         Inscricao novaInscricao = inscritoService.cadastrarInscricao(inscrito, palestra_id);
