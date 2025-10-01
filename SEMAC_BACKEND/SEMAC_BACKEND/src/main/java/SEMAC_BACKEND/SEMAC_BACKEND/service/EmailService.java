@@ -24,7 +24,7 @@ public class EmailService {
 
     @Async
     public void sendEmail(String to, String subject, String body) throws IOException {
-        Email from = new Email("ryan.c.aguiiarr@gmail.com");
+        Email from = new Email("semacifspxi@gmail.com");
 
         Email recipient = new Email(to);
 
